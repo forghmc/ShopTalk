@@ -3,7 +3,7 @@ artifacts_root: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  source_URL: https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-images-original.tar
+  source_URL: https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-listings.tar
  # source_URL: https://drive.google.com/file/d/1OiiSV5u2elyYhovgH6_mCqReJsjZ8fJr/view?usp=sharing
  # The following archives are available for download:
  # LICENSE-CC-BY-4.0.txt — Copy of the CC BY 4.0 license https://amazon-berkeley-objects.s3.amazonaws.com/LICENSE-CC-BY-4.0.txt
@@ -16,5 +16,6 @@ data_ingestion:
  # abo-mvr.csv.xz — Dataset splits for the CVPR22 Multi-View Retrieval experiments (4 Mb) https://amazon-berkeley-objects.s3.amazonaws.com/benchmarks/abo-mvr.csv.xz
  # abo-benchmark-material.tar — Rendered 3D models for the CVPR22 Material Prediction experiments (271 Gb) https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-benchmark-material.tar
  # abo-part-labels.tar — 3D part labels for the 3D Vision and Modeling Challenges in eCommerce ICCV 2023 Workshop Challenge (2 Gb) https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-part-labels.tar
-  local_data_file: artifacts/data_ingestion/data.zip
+  local_data_file: artifacts/data_ingestion/data.tar
+  untar_path: artifacts/data_ingestion
   unzip_dir: artifacts/data_ingestion
