@@ -1,18 +1,33 @@
 COLUMNS:
-  fixed acidity: float64
-  volatile acidity: float64
-  citric acid: float64
-  residual sugar: float64
-  chlorides: float64
-  free sulfur dioxide: float64
-  total sulfur dioxide: float64
-  density: float64
-  pH: float64
-  sulphates: float64
-  alcohol: float64
-  quality: int64
-
+  brand: list
+  bullet_point: list
+  color: list
+  item_id: str
+  item_name: list
+  model_name: list
+  model_number: list
+  model_year: list
+  product_type: list
+  style: list
+  main_image_id: str
+  other_image_id: list
+  item_keywords: list
+  country: str
+  marketplace: str
+  domain_name: str
+  node: list
+  item_dimensions: dict
+  item_weight: list
+  material: list
+  fabric_type: list
+  color_code: list
+  product_description: list
+  spin_id: list
+  3dmodel_id: list
+  pattern: list
+  finish_type: list
+  item_shape: list
 
 TARGET_COLUMN:
-  name: quality
+  product_description: list
   
