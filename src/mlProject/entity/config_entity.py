@@ -16,3 +16,8 @@ class DataValidationConfig:
     STATUS_FILE: str
     untar_data_dir: Path
     all_schema: dict
+
+@dataclass(frozen=True)
+class DataTransformationConfig:
+    root_dir: Path
+    data_dir: Path

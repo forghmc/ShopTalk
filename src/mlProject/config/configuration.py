@@ -3,6 +3,7 @@ from mlProject.utils.common import read_yaml, create_directories
 from pathlib import Path
 from mlProject.entity.config_entity import DataIngestionConfig
 from mlProject.entity.config_entity import DataValidationConfig
+from mlProject.entity.config_entity import DataTransformationConfig
 
 class ConfigurationManager:
     CONFIG_FILE_PATH = r'C:\Users\deept\ShopTalk\config\config.yaml'
@@ -20,8 +21,6 @@ class ConfigurationManager:
 
         create_directories([self.config.artifacts_root])
 
-
-    
     def get_data_ingestion_config(self) -> DataIngestionConfig:
         config = self.config.data_ingestion
 
@@ -51,3 +50,14 @@ class ConfigurationManager:
         )
 
         return data_validation_config
+    
+    def get_data_transformation_config(self) -> DataTransformationConfig:
+        config = self.config.data_transformation
+        create_directories([config.root_dir])
+
+        data_transformation_config = DataTransformationConfig(
+            root_dir=config.root_dir,
+            data_dir=config.data_dir,
+        )
+
+        return data_transformation_config

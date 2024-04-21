@@ -24,3 +24,7 @@ data_validation:
   root_dir: artifacts/data_validation
   untar_data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
   STATUS_FILE: artifacts/data_validation/status.txt
+
+data_transformation:
+  root_dir: artifacts/data_validation
+  data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
