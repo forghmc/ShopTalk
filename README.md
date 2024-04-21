@@ -26,7 +26,8 @@ https://github.com/someshnaman/End_to_end_MLOPS_project
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-conda create -p ./env python=3.8 -y
+#conda create -p ./env python=3.8 -y
+conda create -p ./env python=3.10 -y
 ```
 
 ```bash
