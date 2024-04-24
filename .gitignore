@@ -131,6 +131,9 @@ venv.bak/
 # artifacts
 artifacts/
 
+# mlruns
+mlruns/
+
 # Spyder project settings
 .spyderproject
 .spyproject
