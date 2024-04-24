@@ -26,7 +26,7 @@ class ModelEvaluation:
 
     def log_into_mlflow(self):
 
-        test_data = pd.read_csv(self.config.test_data_path)
+        test_data = pd.read_json(self.config.test_data_path, lines=True)
         model = joblib.load(self.config.model_path)
 
         test_x = test_data.drop([self.config.target_column], axis=1)
