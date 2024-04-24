@@ -34,3 +34,9 @@ model_trainer:
   train_data_path: artifacts/data_ingestion/data_tar_extracted/listings/metadata/Train/listings_0_train.json
   test_data_path: artifacts/data_ingestion/data_tar_extracted/listings/metadata/Test/listings_0_test.json
   model_name: model.joblib
+
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+  test_data_path: artifacts/data_ingestion/data_tar_extracted/listings/metadata/Test/listings_0_test.json
+  model_path: artifacts/model_trainer/model.joblib
+  metric_file_name: artifacts/model_evaluation/metrics.json

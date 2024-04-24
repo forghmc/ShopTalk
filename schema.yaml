@@ -1,33 +1,53 @@
 COLUMNS:
-  brand: list
-  bullet_point: list
-  color: list
-  item_id: str
-  item_name: list
-  model_name: list
-  model_number: list
-  model_year: list
-  product_type: list
-  style: list
-  main_image_id: str
-  other_image_id: list
-  item_keywords: list
-  country: str
-  marketplace: str
-  domain_name: str
-  node: list
-  item_dimensions: dict
-  item_weight: list
-  material: list
-  fabric_type: list
-  color_code: list
-  product_description: list
-  spin_id: list
-  3dmodel_id: list
-  pattern: list
-  finish_type: list
-  item_shape: list
+  brand: 
+    - language_tag: string
+    - value: string
+  bullet_point: 
+    - language_tag: string
+    - value: string
+  color: null or string
+  item_id: string
+  item_name: 
+    - language_tag: string
+    - value: string
+  product_type: 
+    - value: string
+  style: 
+    - language_tag: string
+    - value: string
+  main_image_id: string
+  other_image_id: 
+    - string
+  item_keywords: 
+    - language_tag: string
+    - value: string
+  country: string
+  marketplace: string
+  domain_name: string
+  item_dimensions:
+    height: 
+      - normalized_value: 
+        - unit: string
+        - value: float
+      - unit: string
+      - value: float
+    length:
+      - normalized_value: 
+        - unit: string
+        - value: float
+      - unit: string
+      - value: float
+    width:
+      - normalized_value: 
+        - unit: string
+        - value: float
+      - unit: string
+      - value: float
+  item_weight: null or float
+  material: null or string
+  fabric_type: null or string
+  color_code: null or string
+  product_description: null or string
 
 TARGET_COLUMN:
-  product_description: list
-  
+  name: product_description
