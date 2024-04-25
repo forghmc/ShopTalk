@@ -34,4 +34,3 @@ class DataValidation:
         except Exception as e:
             print(f"An error occurred: {e}")
             raise  # Consider more specific error handling depending on your needs
-
