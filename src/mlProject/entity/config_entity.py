@@ -19,6 +19,7 @@ class DataValidationConfig:
 
 @dataclass(frozen=True)
 class DataTransformationConfig:
+    base_dir: Path
     root_dir: Path
     data_dir: Path
 

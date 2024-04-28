@@ -26,6 +26,7 @@ data_validation:
   STATUS_FILE: artifacts/data_validation/status.txt
 
 data_transformation:
+  base_dir: artifacts
   root_dir: artifacts/data_validation
   data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
 

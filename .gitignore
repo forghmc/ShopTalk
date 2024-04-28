@@ -129,7 +129,9 @@ env.bak/
 venv.bak/
 
 # artifacts
-artifacts/
+artifacts/data_ingestion/data_tar_extracted/
+artifacts/data_validation/
+artifacts/data_ingestion/abo-images-small/images/small/
 
 # mlruns
 mlruns/

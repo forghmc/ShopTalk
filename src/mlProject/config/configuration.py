@@ -60,6 +60,7 @@ class ConfigurationManager:
         data_transformation_config = DataTransformationConfig(
             root_dir=config.root_dir,
             data_dir=config.data_dir,
+            base_dir=config.base_dir
         )
 
         return data_transformation_config
