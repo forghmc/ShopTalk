@@ -29,6 +29,7 @@ data_transformation:
   base_dir: artifacts
   root_dir: artifacts/data_validation
   data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
+  metadata_dir: artifacts/data_ingestion/abo-images-small/images/metadata
 
 model_trainer:
   root_dir: artifacts/model_trainer

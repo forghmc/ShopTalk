@@ -1,5 +1,6 @@
 import os
 import json
+import gzip
 from mlProject import logger
 from mlProject.entity.config_entity import DataTransformationConfig
 from sklearn.model_selection import train_test_split
@@ -91,6 +92,27 @@ class DataTransformation:
         # Return the paths to the created output files
         test_output_path, train_output_path  # These indicate where the files are stored
 
+        metadata_path = os.path.join(self.config.metadata_dir, "images.csv.gz")
+        # Uncompress the CSV file
+        uncompressed_csv_path = metadata_path.replace(".gz", "")
+
+        # Uncompress the file and validate columns
+        with gzip.open(metadata_path, 'rt') as gz_file:
+            csv_content = gz_file.read()
+
+        # Write the uncompressed content to a new file
+        with open(uncompressed_csv_path, 'w') as uncompressed_file:
+            uncompressed_file.write(csv_content)
+
+        # Read the CSV file into a DataFrame
+        image_metadata_df = pd.read_csv(uncompressed_csv_path)
+        test_csv_path_df = pd.read_csv(test_output_path)
+        train_csv_path_df = pd.read_csv(train_output_path)
+
+        image_dataset_test = test_csv_path_df.merge(image_metadata_df, left_on="main_image_id", right_on="image_id")
+        image_dataset_train = train_csv_path_df.merge(image_metadata_df, left_on="main_image_id", right_on="image_id")
+        image_dataset_train['combined'] = image_dataset_train.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
+        image_dataset_test['combined'] = image_dataset_test.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
 
     def train_test_spliting(self):
         try:

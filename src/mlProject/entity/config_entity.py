@@ -22,7 +22,7 @@ class DataTransformationConfig:
     base_dir: Path
     root_dir: Path
     data_dir: Path
-
+    metadata_dir: Path
 from dataclasses import dataclass
 from pathlib import Path
 
