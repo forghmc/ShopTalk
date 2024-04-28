@@ -113,7 +113,15 @@ class DataTransformation:
         image_dataset_train = train_csv_path_df.merge(image_metadata_df, left_on="main_image_id", right_on="image_id")
         image_dataset_train['combined'] = image_dataset_train.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
         image_dataset_test['combined'] = image_dataset_test.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
+        
+         # Output the processed data to a new file in the output folder
+        test_output_path = os.path.join(destination_folder, f"Merged_Test{os.path.basename(destination_folder)}.csv")
+        train_output_path = os.path.join(destination_folder, f"Merged_Train{os.path.basename(destination_folder)}.csv")
+    
+        image_dataset_test.to_csv(test_output_path)
+        image_dataset_train.to_csv(train_output_path)
 
+        
     def train_test_spliting(self):
         try:
             # Base directory containing JSON files
