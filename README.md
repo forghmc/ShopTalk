@@ -52,13 +52,19 @@ pip install -r requirements.txt
 ```bash
 streamlit run appv2.py
 ```
+```bash
+python -m streamlit run appv2.py
+
+```
 	
 # To Kill streamlit process
 ```bash
 ps -ef | grep streamlit | grep -v grep | awk '{print $2}' | xargs kill
 ```
-
-
+Return to your normal shell by typing:
+```bash
+ deactivate
+```
 ## MLflow
 
 [Documentation](https://mlflow.org/docs/latest/index.html)
