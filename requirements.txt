@@ -11,12 +11,18 @@ pyYAML
 tqdm
 httpx==0.23.3
 ensure==1.0.2
+streamlit
 pydantic==1.10.5
 joblib
 types-PyYAML
 requests==2.28.2
 six==1.16.0
 uvicorn==0.20.0
+pinecone-client==3.1.0 \
+torch
+torchvision
+transformer
+httpx
 Flask
 Flask-Cors
 -e . # This is needed for creation as a local Project

@@ -8,7 +8,12 @@ from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
 from typing import Any
-
+from PIL import Image
+import requests
+import torch
+import io
+from torchvision import transforms
+from torchvision.transforms.functional import InterpolationMode
 
 
 @ensure_annotations
@@ -124,6 +129,33 @@ def get_size(path: Path) -> str:
     """
     size_in_kb = round(os.path.getsize(path)/1024)
     return f"~ {size_in_kb} KB"
+@ensure_annotations
+def read_image_from_tar(tarfile, path):
+    member = tarfile.getmember(path)
+    if member is None:
+        print(f"File {path} not found in tar.")
+        return None
+    image_bytes = tarfile.extractfile(member).read()
+    return Image.open(io.BytesIO(image_bytes))
+@ensure_annotations
+def load_product_image(tar,img_url):
+    try:
+        image = read_image_from_tar(tar, img_url)
+        if image is None:
+            return None
+        image = image.convert("RGB")
+        '''
+        transform = transforms.Compose([
+        transforms.Resize((224,224),interpolation=InterpolationMode.BICUBIC),
+        transforms.ToTensor(),
+        transforms.Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711))
+        ])
+        '''
+        return image
+    except Exception as e:
+        print(f"Error processing image {img_url}: {e}")
+        return None
+    
 
 
 

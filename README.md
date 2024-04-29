@@ -26,8 +26,8 @@ https://github.com/someshnaman/End_to_end_MLOPS_project
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-#conda create -p ./env python=3.8 -y
-conda create -p ./env python=3.10 -y
+conda create -p ./env python=3.8 -y
+#conda create -p ./env python=3.10 -y
 ```
 
 ```bash
@@ -40,17 +40,20 @@ conda activate ./env
 pip install -r requirements.txt
 ```
 
-
+# Resize Image - this is neeeded once
+1. Provide the value for extracted image folder with in file 
+2. run utils/image_exctract.py
+# To start streamlit app
+1. Make sure your path to image  in appv2.py are pointing towards extracted resized image folder
+2. Then 
 ```bash
-# Finally run the following command
-python app.py
+streamlit run appv2.py
 ```
-
-Now,
+	
+# To Kill streamlit process
 ```bash
-open up you local host and port
+ps -ef | grep streamlit | grep -v grep | awk '{print $2}' | xargs kill
 ```
-
 
 
 ## MLflow
@@ -118,8 +121,16 @@ export MLFLOW_TRACKING_PASSWORD=6e7e6b4e21fb207c4cbf0d4d7f20506e23e748cc
 ## 4. Create EC2 machine (Ubuntu) 
 
 ## 5. Open EC2 and Install docker in EC2 Machine:
+
+## 6. To start streamlit app
+```bash
+streamlit run app.py
+```
 	
-	
+## 7. To Kill streamlit process
+```bash
+ps -ef | grep streamlit | grep -v grep | awk '{print $2}' | xargs kill
+```
 	#optinal
 
 	sudo apt-get update -y
