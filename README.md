@@ -45,7 +45,10 @@ pip install -r requirements.txt
 2. run utils/image_exctract.py
 # To start streamlit app
 1. Make sure your path to image  in appv2.py are pointing towards extracted resized image folder
-2. Then 
+2. Update the path the 'processed_dataset_target_data_with_captions_only.csv' in appv2 file.
+3. Set pine cone key in env with "export pkey=<your key>" and also update index_name.
+
+3. Then 
 ```bash
 streamlit run appv2.py
 ```

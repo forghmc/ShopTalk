@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from pinecone import Pinecone, ServerlessSpec
 
 load_dotenv()
+#TO DO: Remove Hardcoded paths and index name.
 pkey = os.environ.get("pkey")
 pc=Pinecone(api_key=pkey)
 index = pc.Index('stv1-embeddings')
