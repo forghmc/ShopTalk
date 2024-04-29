@@ -8,9 +8,13 @@ from mlProject.entity.config_entity import ModelTrainerConfig
 from mlProject.entity.config_entity import ModelEvaluationConfig
 
 class ConfigurationManager:
-    CONFIG_FILE_PATH = r'C:\Users\deept\ShopTalk\config\config.yaml'
-    PARAMS_FILE_PATH = r"C:\Users\deept\ShopTalk\params.yaml"
-    SCHEMA_FILE_PATH = r"C:\Users\deept\ShopTalk\schema.yaml"
+    # Base directory where the script is located
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+
+    # Configuration, Parameters, and Schema file paths
+    CONFIG_FILE_PATH = BASE_DIR / "config/config.yaml"
+    PARAMS_FILE_PATH = BASE_DIR / "params.yaml"
+    SCHEMA_FILE_PATH = BASE_DIR / "schema.yaml"
     def __init__(
         self,
         config_filepath = Path(CONFIG_FILE_PATH),
