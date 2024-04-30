@@ -121,7 +121,7 @@ class DataTransformation:
         image_dataset_test.to_csv(test_output_path)
         image_dataset_train.to_csv(train_output_path)
 
-        
+  
     def train_test_spliting(self):
         try:
             # Base directory containing JSON files
@@ -167,6 +167,53 @@ class DataTransformation:
             logger.error("Error during train/test split: ", exc_info=True)
             raise  # Re-raise the exception after logging
     
+    def cleanup_imagecaptioncsv(self):
+        try:
+            # Path to the original CSV file
+            data_dir = Path(self.config.ingest_dir) 
+            csv_file_path = os.path.join(data_dir, "processed_dataset_target_data_with_captions_only.csv")
 
+            # Define the columns to keep
+            columns_to_keep = ['item_id', 'captions']
+
+            # Load the CSV data into a DataFrame, keeping only the specified columns
+            df = pd.read_csv(csv_file_path, usecols=columns_to_keep)
+
+            # Save the updated DataFrame to the new CSV file, without the index
+            df.to_csv(csv_file_path, index=False)
+
+            # Destination folder for output files
+            destination_folder = Path(self.config.root_dir)
+
+            test_csv_path = os.path.join(destination_folder, "Merged_Testdata_validation.csv")
+            train_csv_path = os.path.join(destination_folder, "Merged_Traindata_validation.csv")
+
+            # Output the processed data to a new file in the output folder
+            test_output_path = os.path.join(destination_folder, f"Merged_Test{os.path.basename(destination_folder)}.csv")
+            train_output_path = os.path.join(destination_folder, f"Merged_Train{os.path.basename(destination_folder)}.csv")
+
+            # Read the CSV file into a DataFrame
+            csv_file_path_df = pd.read_csv(csv_file_path)
+            test_csv_path_df = pd.read_csv(test_output_path)
+            train_csv_path_df = pd.read_csv(train_output_path)
+
+            image_dataset_test = test_csv_path_df.merge(csv_file_path_df, left_on="item_id", right_on="item_id")
+            image_dataset_train = train_csv_path_df.merge(csv_file_path_df, left_on="item_id", right_on="item_id")
+            
+            # Merge 'combined' and 'captions' columns, prioritizing non-empty 'captions'
+            image_dataset_test['combined'] = image_dataset_test['combined'].fillna('') + image_dataset_test['captions']
+            image_dataset_train['combined'] = image_dataset_train['combined'].fillna('') + image_dataset_train['captions']
+
+            # Drop 'captions' as it is now merged
+            #image_dataset_test.drop(columns=['captions'], inplace=True)
+            #image_dataset_train.drop(columns=['captions'], inplace=True)
+
+            image_dataset_test.to_csv(test_output_path)
+            image_dataset_train.to_csv(train_output_path)
+        except Exception as e:
+            logger.error("Error during train/test split: ", exc_info=True)
+            raise  # Re-raise the exception after logging
+    
+ 
 ########################################## / TO DO Test Case to check if the main_image_d and imag_id based merge happened properly ####################################
 ########################################## / TO DO Test Case to check if the string concatenation in combined column happend correctly, that can be checked again all columns using spaces from combined as delimiter####################################

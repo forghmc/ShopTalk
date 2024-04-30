@@ -65,7 +65,8 @@ class ConfigurationManager:
             root_dir=config.root_dir,
             data_dir=config.data_dir,
             base_dir=config.base_dir,
-            metadata_dir=config.metadata_dir
+            metadata_dir=config.metadata_dir,
+            ingest_dir=config.ingest_dir
         )
 
         return data_transformation_config

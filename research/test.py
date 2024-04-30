@@ -79,3 +79,4 @@ try:
     data_validation.validate_all_columns()
 except Exception as e:
     raise e
+
