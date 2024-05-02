@@ -4,6 +4,9 @@ import yaml
 from mlProject import logger
 import json
 import joblib
+import boto3
+import pandas as pd
+from io import StringIO
 from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
@@ -14,7 +17,8 @@ import torch
 import io
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
-
+import openai
+from pinecone import Pinecone
 
 @ensure_annotations
 def read_yaml(path_to_yaml: Path) -> ConfigBox:
@@ -158,4 +162,100 @@ def load_product_image(tar,img_url):
     
 
 
+def read_csv_from_s3(key):
 
+    # Setup Boto3 to access S3
+    s3_client = boto3.client('s3')
+    bucket_name = 'shop-talk-data'
+
+    response = s3_client.get_object(Bucket=bucket_name, Key=key)
+    status = response.get('ResponseMetadata', {}).get('HTTPStatusCode')
+    
+    if status == 200:
+        df = pd.read_csv(response['Body'])
+        return df
+    else:
+        raise Exception('Failed to fetch csv file from S3')
+
+def write_csv_to_s3(df, key):
+
+    # Setup Boto3 to access S3
+    s3_client = boto3.client('s3')
+    bucket_name = 'shop-talk-data'
+
+    csv_buffer = StringIO()
+    df.to_csv(csv_buffer)
+    response = s3_client.put_object(Bucket=bucket_name, Key=key, Body=csv_buffer.getvalue())
+    status = response.get('ResponseMetadata', {}).get('HTTPStatusCode')
+    
+    if status == 200:
+        print('File successfully saved to S3')
+    else:
+        raise Exception('Failed to save csv file to S3')
+    
+def generate_image_url(path):
+    filename = f"C:\\Users\\deept\\ShopTalk_4_27\\artifacts\\data_ingestion\\abo-images-small\\images\\small\\{path}"
+    return filename
+
+def fetch_item_from_userquery(user_query):
+    # Set your OpenAI API key
+    openai.api_key = ''
+
+    # Define the system prompt and user query
+    system_message = """
+    You have been assigned the task of processing user requests presented in natural language and converting them into structured data for further analysis.
+    Instructions:
+    1. Identify and extract entities (like names, organizations, products, etc.) from the user's request ($request). Store these entities in a variable called entities.
+    2. Identify the user's intentions behind $request. Extract these intentions and store them in a variable named intents.
+    3. Analyze $request to find synonyms and linguistic variations. Create a normalized version of the query that maintains the original request's meaning in a standardized form. Store this normalized query in normalized_query.
+    4. Create an array named normalized_queries consisting of at least five different rephrasings of $request. Each variant should represent the same intents but with different synonyms and tones.
+    5. Ensure the result is formatted as a JSON string only, containing no extra text or formatting.
+    """
+    if not user_query:
+        user_query = "I want to buy a red t-shirt"
+
+
+    # Send the chat completion request
+    response = openai.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_query}
+        ],
+        temperature=0.0
+    )
+    response_text = response.choices[0].message.content
+    # Print the response
+    print(response_text)
+    print(json.loads(response_text))
+
+    embedding_model = openai.embeddings.create(input=[response_text], model="text-embedding-ada-002")
+    embeddings = embedding_model.data[0].embedding
+
+    print(embeddings)
+
+    pc = Pinecone(api_key="")
+
+    index = pc.Index("shopping-index")
+    # Query Pinecone with the generated embedding
+    results = index.query(vector=embeddings, top_k=3, include_metadata=True, namespace="shopping", include_values=True)
+    print(results)
+    # Display the results
+    #for match in results['matches']:
+    #    print(f"Score: {match['score']}, {match['id']}, Metadata: {match['metadata']}")
+    images = []
+    captions = []
+    sampled_data = pd.read_csv('C:/Users/deept/ShopTalk/artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
+    for result in results['matches']:
+        item_id = result['id']
+        item_details = sampled_data[sampled_data['item_id'] == item_id].iloc[0]
+        item_name = item_details['item_name_in_en']
+        brand_name = item_details['brand']
+        product_type = item_details['product_type']
+        item_image_path = item_details['path']
+        image_url = generate_image_url(item_image_path)
+        
+        images.append(image_url)
+        captions.append(f"Product: {item_name}, Brand: {brand_name}, Type: {product_type}")
+        print (captions)    
+    return images, captions
