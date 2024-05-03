@@ -26,3 +26,4 @@ EXPOSE 8501
 
 # Command to run the app
 CMD ["python", "-m", "streamlit", "run", "appv2.py"]
+
