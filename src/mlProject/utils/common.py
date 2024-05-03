@@ -194,13 +194,13 @@ def write_csv_to_s3(df, key):
         raise Exception('Failed to save csv file to S3')
     
 def generate_image_url(path):
-    filename = f"C:\\Users\\deept\\ShopTalk_4_27\\artifacts\\data_ingestion\\abo-images-small\\images\\small\\{path}"
+    filename = f"/artifacts/data_ingestion/abo-images-small/images/small/{path}"
     return filename
 
 def fetch_item_from_userquery(user_query):
     # Set your OpenAI API key
-    openai.api_key = ''
-
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
+    pkey = os.environ.get("PINE_CONE_API_KEY")
     # Define the system prompt and user query
     system_message = """
     You have been assigned the task of processing user requests presented in natural language and converting them into structured data for further analysis.
@@ -216,6 +216,7 @@ def fetch_item_from_userquery(user_query):
 
 
     # Send the chat completion request
+    
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
@@ -234,7 +235,7 @@ def fetch_item_from_userquery(user_query):
 
     print(embeddings)
 
-    pc = Pinecone(api_key="")
+    pc = Pinecone(api_key=pkey)
 
     index = pc.Index("shopping-index")
     # Query Pinecone with the generated embedding
@@ -245,7 +246,7 @@ def fetch_item_from_userquery(user_query):
     #    print(f"Score: {match['score']}, {match['id']}, Metadata: {match['metadata']}")
     images = []
     captions = []
-    sampled_data = pd.read_csv('C:/Users/deept/ShopTalk/artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
+    sampled_data = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
     for result in results['matches']:
         item_id = result['id']
         item_details = sampled_data[sampled_data['item_id'] == item_id].iloc[0]
