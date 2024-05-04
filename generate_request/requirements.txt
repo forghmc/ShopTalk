@@ -1,0 +1,9 @@
+Flask
+requests
+jsonify
+openai
+pinecone-client
+pandas
+#-e .  This is needed for creation as a local Project
+
+
