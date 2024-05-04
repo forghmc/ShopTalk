@@ -30,7 +30,7 @@ def fetch_item_from_userquery(query):
     url = 'http://localhost:5000/llm/generate'  # URL of the Flask app
     data = {'query': query}
     response = requests.post(url, json=data)
-    if response.status_code == 200:
+    if response.status_code == 200: 
         return response.json()
     else:
         st.error('Failed to retrieve data from the API')
