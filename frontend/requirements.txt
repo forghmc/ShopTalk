@@ -1,0 +1,5 @@
+requests
+streamlit
+# -e . # This is needed for creation as a local Project
+
+
