@@ -29,9 +29,6 @@ def generate_summary(obj):
     return "hello this is the product summary"
 '''
 def generate_summary(obj):
-    # Set your OpenAI API key
-    openai.api_key = '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'
-    
     print(f'Genrating Summary: {obj}')
     # Define the system prompt and user query
     system_message = """
@@ -58,7 +55,7 @@ def generate_summary(obj):
     )
     response_text = response.choices[0].message.content
     # Print the response
-    print(response_text)
+   #print(response_text)
     return response_text
 
 @app.route('/llm/generate', methods=['POST'])
