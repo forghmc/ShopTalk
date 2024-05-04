@@ -1,0 +1,24 @@
+version: '3.8' 
+services:
+  generate_request:
+    build: ./generate_request
+    environment:
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"
+    volumes:
+      # Specifically mount the CSV data directory
+      - ./artifacts/data_ingestion/data_tar_extracted:/app/artifacts/data_ingestion/data_tar_extracted
+
+  frontend:
+    build: ./frontend
+    command: streamlit run frontend.py --server.port 8501 --logger.level debug
+    environment:
+      - STREAMLIT_LOG_LEVEL=debug
+    ports:
+      - "8501:8501"
+    depends_on:
+      - "generate_request"
+    volumes:
+      # Mount the whole frontend directory to ensure updates reflect without rebuilding the container
+      - ./frontend:/app
