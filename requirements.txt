@@ -27,5 +27,8 @@ Flask
 Flask-Cors
 openai
 cohere
+langchain==0.0.174 
+llama-index==0.6.9
+openai
 #llama_index[openai]
 -e . # This is needed for creation as a local Project
