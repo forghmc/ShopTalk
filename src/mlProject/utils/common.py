@@ -15,6 +15,8 @@ from PIL import Image
 import requests
 import torch
 import io
+from transformers import BlipProcessor, BlipForConditionalGeneration
+from io import BytesIO
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
 import openai
@@ -142,24 +144,37 @@ def read_image_from_tar(tarfile, path):
     image_bytes = tarfile.extractfile(member).read()
     return Image.open(io.BytesIO(image_bytes))
 @ensure_annotations
-def load_product_image(tar,img_url):
+def load_product_image(img_url):
     try:
-        image = read_image_from_tar(tar, img_url)
+        image = img_url
         if image is None:
             return None
         image = image.convert("RGB")
-        '''
+        
         transform = transforms.Compose([
         transforms.Resize((224,224),interpolation=InterpolationMode.BICUBIC),
         transforms.ToTensor(),
         transforms.Normalize((0.48145466, 0.4578275, 0.40821073), (0.26862954, 0.26130258, 0.27577711))
         ])
-        '''
         return image
     except Exception as e:
         print(f"Error processing image {img_url}: {e}")
         return None
+def generateImageCaption(dataset):
     
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    for index, row in dataset.iterrows():
+        processor = BlipProcessor.from_pretrained('Salesforce/blip-image-captioning-base')
+        image = load_product_image('/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/' + row['path'], device)
+        if image is None:
+            continue
+        caption =''
+        with torch.no_grad():
+            caption = model.generate(image, sample=False, num_beams=3, max_length=20, min_length=5)
+            dataset.at[index, 'caption'] = caption 
+
+    print(dataset.head(10))
+      
 
 
 def read_csv_from_s3(key):

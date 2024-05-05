@@ -9,7 +9,7 @@ import pandas as pd
 app = Flask(__name__)
 
 openai.api_key= os.environ.get("OPENAI_API_KEY")
-#print(open.api_key)
+print(openai.api_key)
 print("Program started")
 # Define the system prompt
 system_message = """
@@ -22,7 +22,7 @@ Instructions:
 5. Ensure the result is formatted as a JSON string only, containing no extra text or formatting.
 """
 def generate_image_url(path):
-    filename = f"/Users/user/Documents/MLProjects/project6/ShopTalk/artifacts/data_ingestion/data_tar_extracted/resize/{path}"
+    filename = f"resize/{path}"
     return filename
 '''
 def generate_summary(obj):
@@ -55,7 +55,7 @@ def generate_summary(obj):
     )
     response_text = response.choices[0].message.content
     # Print the response
-   #print(response_text)
+    print(response_text)
     return response_text
 
 @app.route('/llm/generate', methods=['POST'])
@@ -65,7 +65,7 @@ def generate_response():
     try: 
         user_query = request.get_json().get('query')
 
-        
+        print(user_query)
         # Send the chat completion request
         response = openai.chat.completions.create(
             model="gpt-4",
@@ -97,7 +97,9 @@ def generate_response():
         images =[]
         captions = []
         summaries = []
+        print("Reading dataset")
         sampled_data = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
+        sampled_data.head()
         for result in results['matches']:
             print (result)
             item_id = result['id']
