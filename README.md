@@ -26,7 +26,6 @@ https://github.com/someshnaman/End_to_end_MLOPS_project
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-conda create -p ./env python=3.8 -y
 #conda create -p ./env python=3.10 -y
 ```
 
@@ -36,10 +35,14 @@ conda activate ./env
 
 
 ### STEP 02- install the requirements
-```bash
-pip install -r requirements.txt
-```
 
+```bash
+chmod +x setup.sh
+```
+```bash
+./setup.sh
+
+```
 # Resize Image - this is neeeded once
 1. Provide the value for extracted image folder with in file 
 2. run utils/image_exctract.py
