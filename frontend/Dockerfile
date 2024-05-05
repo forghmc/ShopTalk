@@ -2,8 +2,8 @@
 FROM python:3.8-slim
 
 # Set environment variables
-ENV OPENAI_API_KEY="" \
-PINE_CONE_API_KEY=""
+ENV OPENAI_API_KEY = "" \
+PINE_CONE_API_KEY = ""
   
 # Set the working directory in the container
 WORKDIR /app

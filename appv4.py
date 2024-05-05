@@ -2,11 +2,9 @@ from flask import Flask, request, jsonify
 import openai
 import json
 from pinecone import Pinecone
+import os
 
 app = Flask(__name__)
-
-# Set your OpenAI API key
-openai.api_key = ''
 
 # Define the system prompt
 system_message = """
@@ -23,8 +21,11 @@ Instructions:
 def generate_response():
     user_query = request.get_json().get('query')
 
+    # Set your OpenAI API key
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+
     # Send the chat completion request
-    response = openai.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": system_message},
@@ -35,36 +36,12 @@ def generate_response():
     response_text = response.choices[0].message.content
     response_data = json.loads(response_text)
 
-    embedding_model = openai.embeddings.create(input=[response_text], model="text-embedding-ada-002")
-    embeddings = embedding_model.data[0].embedding
+    # Your remaining code here
 
-    pc = Pinecone(api_key="")
-    index = pc.Index("shopping-index")
-
-    # Query Pinecone with the generated embedding
-    results = index.query(vector=embeddings, top_k=3, include_metadata=True, namespace="shopping", include_values=True)
-
-    matches = []
-    for match in results['matches']:
-        matches.append({
-            'id': match['id'],
-            'score': match['score'],
-            'metadata': match['metadata']
-        })
-    captions = []
-    sampled_data = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
-    for result in results['matches']:
-        print (result)
-        item_id = result['id']
-        item_details = sampled_data[sampled_data['item_id'] == item_id].iloc[0]
-        item_name = item_details['item_name_in_en']
-        brand_name = item_details['brand']
-        product_type = item_details['product_type']
-        item_image_path = item_details['path']
-
-        captions.append(f"Product: {item_name}, Brand: {brand_name}, Type: {product_type}")
-        print (captions)    
     return jsonify({'matches': matches})
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
+
+
+ # curl -X POST http://localhost:5000/llm/generate -H 'Content-Type: application/json' -d '{"query": "I want to buy a red t-shirt"}'

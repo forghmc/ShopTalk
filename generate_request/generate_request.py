@@ -75,6 +75,8 @@ def generate_summary(obj):
     logger.info("Generating summary from the engine")
     user_query = f"the $Object is {json.dumps(obj.to_json())}"
     
+    logger.info("Gemerated Summary")
+
     # Send the chat completion request
     response = openai.chat.completions.create(
         model="gpt-4",
@@ -149,5 +151,6 @@ def generate_response():
         return jsonify({'images': images, 'captions': captions, 'summaries': summaries})
     except Exception as e:
         abort(500, description=str(e))
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

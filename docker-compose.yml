@@ -9,6 +9,8 @@ services:
     volumes:
       # Specifically mount the CSV data directory
       - ./artifacts/data_ingestion/data_tar_extracted:/app/artifacts/data_ingestion/data_tar_extracted
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
@@ -22,3 +24,8 @@ services:
     volumes:
       # Mount the whole frontend directory to ensure updates reflect without rebuilding the container
       - ./frontend:/app
+    networks:
+      - app-network
+
+networks:
+  app-network:

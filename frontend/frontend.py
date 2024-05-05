@@ -1,13 +1,13 @@
 import streamlit as st
 import os
 import requests
-st.set_option('logger.level', 'debug')
+# st.set_option('logger.level', 'debug')
 def generate_image_url(path):
     return f"/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/{path}"
 
 def fetch_item_from_userquery(query):
     """Send a query to the Flask API and return the results."""
-    url = 'http://generate_request:5000/llm/generate'  # Updated URL
+    url = 'http://localhost:5000/llm/generate'  # Updated URL
     data = {'query': query}
     response = requests.post(url, json=data)
     print(response)

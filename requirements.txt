@@ -1,6 +1,5 @@
 pandas
 mlflow==2.2.2
-gradio==3.19.1
 python-dotenv==1.0.0
 notebook
 numpy
@@ -26,5 +25,7 @@ transformers
 httpx
 Flask
 Flask-Cors
-
+openai
+cohere
+#llama_index[openai]
 -e . # This is needed for creation as a local Project

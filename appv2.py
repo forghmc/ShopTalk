@@ -26,6 +26,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def generate_image_url(path):
     return f"/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/{path}"
 
+def generate_summary(path):
+    return f"/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/{path}"
+
 def clear_form():
     st.session_state["product_name"] = ""
     st.session_state.pop('results', None) 
