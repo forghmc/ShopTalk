@@ -1,53 +1,23 @@
 COLUMNS:
   brand: 
-    - language_tag: string
     - value: string
   bullet_point: 
-    - language_tag: string
     - value: string
   color: null or string
   item_id: string
-  item_name: 
-    - language_tag: string
+  item_name_in_en: 
     - value: string
   product_type: 
     - value: string
   style: 
-    - language_tag: string
     - value: string
-  main_image_id: string
-  other_image_id: 
-    - string
+  model_name:
+    - value: string
   item_keywords: 
-    - language_tag: string
     - value: string
-  country: string
-  marketplace: string
-  domain_name: string
-  item_dimensions:
-    height: 
-      - normalized_value: 
-        - unit: string
-        - value: float
-      - unit: string
-      - value: float
-    length:
-      - normalized_value: 
-        - unit: string
-        - value: float
-      - unit: string
-      - value: float
-    width:
-      - normalized_value: 
-        - unit: string
-        - value: float
-      - unit: string
-      - value: float
-  item_weight: null or float
-  material: null or string
-  fabric_type: null or string
-  color_code: null or string
-  product_description: null or string
-
+  bullet_point:
+    - value: string
+  path:
+    - value: string
 TARGET_COLUMN:
-  name: product_description
+  name: item_id

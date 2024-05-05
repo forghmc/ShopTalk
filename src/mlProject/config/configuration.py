@@ -34,10 +34,13 @@ class ConfigurationManager:
 
         data_ingestion_config = DataIngestionConfig(
             root_dir=config.root_dir,
-            source_URL=config.source_URL,
-            local_data_file=config.local_data_file,
-            unzip_dir=config.unzip_dir, 
-            untar_path=config.untar_path 
+            source_data_url =config.source_data_url,
+            source_image_url =config.source_image_url,
+            local_data_file =config.local_data_file,
+            local_image_file =config.local_image_file,
+            target_data_file =config.target_data_file,
+            target_data_image_file =config.target_data_image_file,
+            unzip_dir=config.unzip_dir
         )
 
         return data_ingestion_config
@@ -49,12 +52,15 @@ class ConfigurationManager:
         create_directories([config.root_dir])
 
         data_validation_config = DataValidationConfig(
+            input_root= config.input_root,
             root_dir=config.root_dir,
+            input_file = config.input_file,
+            output_file = config.output_file,
             STATUS_FILE=config.STATUS_FILE,
             untar_data_dir = config.untar_data_dir,
             all_schema=schema,
         )
-
+    
         return data_validation_config
     
     def get_data_transformation_config(self) -> DataTransformationConfig:
@@ -65,6 +71,8 @@ class ConfigurationManager:
             root_dir=config.root_dir,
             data_dir=config.data_dir,
             base_dir=config.base_dir,
+            input_file = config.input_file,
+            output_file = config.output_file,
             metadata_dir=config.metadata_dir,
             ingest_dir=config.ingest_dir
         )

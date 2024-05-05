@@ -3,20 +3,28 @@ artifacts_root: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  source_URL: https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-listings.tar
-  local_data_file: artifacts/data_ingestion/data.tar
-  untar_path: artifacts/data_ingestion
-  unzip_dir: artifacts/data_ingestion
+  source_data_url: https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-listings.tar
+  source_image_url: https://amazon-berkeley-objects.s3.amazonaws.com/archives/abo-images-small.tar
+  local_data_file: abo-listings.tar
+  local_image_file: abo-images-small.tar
+  target_data_file: first_dataset.csv
+  target_data_image_file: first_dataset_with_image.csv
+  unzip_dir: artifacts/data_ingestion/extracted
 
 data_validation:
+  input_root: artifacts/data_ingestion
   root_dir: artifacts/data_validation
+  input_file: first_dataset_with_image.csv
   untar_data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
+  output_file: data_validation_output.csv
   STATUS_FILE: artifacts/data_validation/status.txt
 
 data_transformation:
   base_dir: artifacts
-  ingest_dir: artifacts/data_ingestion
-  root_dir: artifacts/data_validation
+  ingest_dir: artifacts/data_validation
+  input_file: data_validation_output.csv
+  root_dir: artifacts/data_transformation
+  output_file: transformed_dataset.csv
   data_dir: artifacts/data_ingestion/data_tar_extracted/listings/metadata
   metadata_dir: artifacts/data_ingestion/abo-images-small/images/metadata
 

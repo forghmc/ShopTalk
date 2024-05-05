@@ -12,7 +12,7 @@ class DataIngestionTrainingPipeline:
         data_ingestion_config = config.get_data_ingestion_config()
         data_ingestion = DataIngestion(config=data_ingestion_config)
         data_ingestion.download_file()
-        data_ingestion.extract_compressed_files_from_tar()
+        #data_ingestion.extract_compressed_files_from_tar()
 
 if __name__ == '__main__':
     try:
