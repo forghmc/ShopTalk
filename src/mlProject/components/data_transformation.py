@@ -15,55 +15,71 @@ class DataTransformation:
     def concatenate_nested_values(self,nested_obj):
         return " ".join([str(v) for v in nested_obj.values()])
     
-    ## Note: You can add different data transformation techniques such as Scaler, PCA and all
-    #You can perform all kinds of EDA in ML cycle here before passing this data to the model
-    # Helper function to process JSON files from a given folder and output them to a destination folder
-    def process_json_files(self, source_folder, output_folder):
-        processed_data = []
-        # List of keys to check in each JSON object
-        keys_to_check = ["item_id", "product_type", "brand", "model_name", "item_name_in_en_us", "bullet_point", "color", "style", "main_image_id", "item_keywords"]
-        # Get all JSON files in the source folder
-        json_files = [f for f in os.listdir(source_folder) if f.endswith(".json")]
+    def drop_duplicates_by_item_id(self,df):
+        if 'item_id' in df.columns:
+            # Dropping duplicates based on the 'item_id' column.
+            df_cleaned = df.drop_duplicates(subset='item_id', keep='first')
+            logger.info(f"Duplicates dropped, remaining rows: {df_cleaned.shape[0]}")
+            return df_cleaned
+        else:
+            logger.error("Error: 'item_id' column not found in DataFrame.")
+        return df
+        
+    def fillmissingvalues(self, df):
+        # There is no numeric column so replacing missing value with unknown
+        logger.info("Replacing missing values for all columns with unknown")
+        columns_to_fill = [col for col in df.columns if col != 'item_id']
+    
+        # Replace missing values in these columns with 'unknown'
+        df[columns_to_fill] = df[columns_to_fill].fillna('unknown')
+        return df
+           
+    def data_cleanup(self):
+        try: 
+            if not os.path.exists(self.config.root_dir):
+                os.makedirs(self.config.root_dir)
+            inputfile = os.path.join(self.config.ingest_dir, os.path.basename(self.config.input_file))
+            outputfile= os.path.join(self.config.root_dir, os.path.basename(self.config.output_file))
+            logger.info("Loading file for data transformation %s", inputfile)
+            dataset = pd.read_csv(inputfile)
+            logger.info("Data Shape before drop %s", dataset.shape)
+            logger.info("Data Unique before drop %s", dataset.nunique)
+            df_no_duplicates= self.drop_duplicates_by_item_id(dataset)
+            logger.info("Data Shape after drop %s", df_no_duplicates.shape)
+            logger.info("Data dup Count after drop %s", df_no_duplicates.nunique())
+            logger.info("Dataset Missing Values Count %s",df_no_duplicates.isnull().sum())
+            # List all columns except 'item_id'
+            df_filled = self.fillmissingvalues(df_no_duplicates)
+            logger.info("Dataset count filling missing values %s",df_filled.isnull().sum())
+            logger.info("Dataset  Count %s",df_no_duplicates.count())
+            logger.info(" Writing output file to %s", outputfile)
+            df_filled.to_csv(outputfile, index = False)
+        except Exception as e:
+            logger.error(f"An error occurred: {e}")
+            raise 
+    
+    '''
+    Note this faction needs first to generate image caption(Using blip) and
+    that are generated during model training and it is compute intesnsive.
+    So filtering the dataset based on the dataset that will have caption generated.
+    This function will be called from model trainer.
+    It also generate the combined column which has text joined from one column as
+    seprated by space. 
+    '''
+    def filter_caption_generate_combined_column(self,dataset):
+        
+        '''
+        Filters rows in a DataFrame based on the 'caption' column to exclude any rows where
+        the caption is missing or empty.
+        '''
+        filtered_df = dataset[dataset['caption'].notna() & dataset['caption'].astype(str).str.strip() != '']
+        columns_to_combine = filtered_df.columns.drop('path')
 
-        for json_file in json_files:
-            file_path = os.path.join(source_folder, json_file)
-
-            # Read the file line by line to avoid JSON decoding errors
-            with open(file_path, 'r') as f:
-                lines = f.readlines()
-
-                for line in lines:
-                    try:
-                        json_obj = json.loads(line)  # Load the JSON object from the line
-                        new_obj = {}
-                        for key in keys_to_check:
-                            if key in json_obj:
-                                value = json_obj[key]
-                                if isinstance(value, list):
-                                    # If it's a list of nested JSON objects, concatenate their values
-                                    concatenated_string = " ".join([self.concatenate_nested_values(v) for v in value])
-                                    new_obj[key] = concatenated_string
-                                elif isinstance(value, dict):
-                                    # If it's a single nested JSON object, concatenate its values
-                                    new_obj[key] = self.concatenate_nested_values(value)
-                                else:
-                                    # If it's a simple value, store it directly
-                                    new_obj[key] = value
-                        processed_data.append(new_obj)
-                    except json.JSONDecodeError:
-                        print(f"Skipping invalid JSON line: {line}")
-
-        # Output the processed data to a new file in the output folder
-        output_file_path = os.path.join(output_folder, f"processed_{os.path.basename(source_folder)}.csv")
-        # Create a DataFrame from the processed data
-        df = pd.DataFrame(processed_data)
-
-        # Write the DataFrame to a CSV file
-        df.to_csv(output_file_path, index=False)
-
-        return output_file_path
-
-    # I am only adding train_test_spliting cz this data is already cleaned up
+        # Safely combine the data from the selected columns into a new column with space-separated values
+        filtered_df['combined'] = filtered_df[columns_to_combine].apply(lambda x: ' '.join(x.astype(str)), axis=1)
+        return filtered_df
+        
+'''     
     def feature_extraction(self):
         data_dir = Path(self.config.data_dir) 
 
@@ -168,6 +184,7 @@ class DataTransformation:
         except Exception as e:
             logger.error("Error during train/test split: ", exc_info=True)
             raise  # Re-raise the exception after logging
+
     
     def cleanup_imagecaptioncsv(self):
         try:
@@ -218,4 +235,4 @@ class DataTransformation:
     
  
 ########################################## / TO DO Test Case to check if the main_image_d and imag_id based merge happened properly ####################################
-########################################## / TO DO Test Case to check if the string concatenation in combined column happend correctly, that can be checked again all columns using spaces from combined as delimiter####################################
+########################################## / TO DO Test Case to check if the string concatenation in combined column happend correctly, that can be checked again all columns using spaces from combined as delimiter####################################'''

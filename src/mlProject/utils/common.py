@@ -165,6 +165,7 @@ def generateImageCaption(dataset):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     for index, row in dataset.iterrows():
         processor = BlipProcessor.from_pretrained('Salesforce/blip-image-captioning-base')
+        model = BlipForConditionalGeneration.from_pretrained('Salesforce/blip-image-captioning-base')
         image = load_product_image('/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/' + row['path'], device)
         if image is None:
             continue
@@ -174,7 +175,7 @@ def generateImageCaption(dataset):
             dataset.at[index, 'caption'] = caption 
 
     print(dataset.head(10))
-      
+    
 
 
 def read_csv_from_s3(key):

@@ -12,25 +12,34 @@ class DataValidation:
     def validate_all_columns(self) -> bool:
         try:
             validation_status = True  # Start assuming all is valid
+           
+            if not os.path.exists(self.config.root_dir):
+                os.makedirs(self.config.root_dir)
+            inputfile = os.path.join(self.config.input_root, os.path.basename(self.config.input_file))
+            outputfile = os.path.join(self.config.root_dir, os.path.basename(self.config.output_file))
+            data = pd.read_csv(inputfile)  # Adjust based on your JSON structure
+            all_cols = list(data.columns)
+            all_schema = self.config.all_schema.keys()
+            # Drop columns not in schema
+            cols_to_drop = all_cols - all_schema
+            logger.info("Data Validation - dropping cloumns %s",cols_to_drop)
 
-            # List all json files in the directory
-            files = [f for f in Path(self.config.untar_data_dir).iterdir() if f.suffix == '.json']
+            if cols_to_drop:
+                data.drop(columns=cols_to_drop, inplace=True)
+                logger.info(f"Dropped columns not in schema: {cols_to_drop}")
+            logger.info    
+            data.to_csv(outputfile, index= False)
+            logger.info("Output of data validationis phase is %s", outputfile)
+            # Validate columns for each file
+            file_status = all(col in all_schema for col in all_cols)
+            validation_status = validation_status and file_status  # Update overall status
 
-            for file in files:
-                data = pd.read_json(file, lines=True)  # Adjust based on your JSON structure
-                all_cols = list(data.columns)
-                all_schema = self.config.all_schema.keys()
-
-                # Validate columns for each file
-                file_status = all(col in all_schema for col in all_cols)
-                validation_status = validation_status and file_status  # Update overall status
-
-                # Log the validation status to a file (you could also log per file results)
-                with open(self.config.STATUS_FILE, 'a') as f:
-                    f.write(f"Validation status for {file.name}: {file_status}\n")
+            # Log the validation status to a file (you could also log per file results)
+            with open(self.config.STATUS_FILE, 'w') as f:
+                    f.write(f"Validation status for {inputfile}: {file_status}\n")
 
             return validation_status
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.error(f"An error occurred: {e}")
             raise  # Consider more specific error handling depending on your needs
