@@ -111,6 +111,8 @@ class DataTransformation:
 
         image_dataset_test = test_csv_path_df.merge(image_metadata_df, left_on="main_image_id", right_on="image_id")
         image_dataset_train = train_csv_path_df.merge(image_metadata_df, left_on="main_image_id", right_on="image_id")
+       
+        
         image_dataset_train['combined'] = image_dataset_train.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
         image_dataset_test['combined'] = image_dataset_test.astype(str).apply(lambda row: ' '.join(row.values), axis=1)
         

@@ -27,7 +27,7 @@ def generate_image_url(path):
     return f"/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/{path}"
 def fetch_item_from_userquery(query):
     """Send a query to the Flask API and return the results."""
-    url = 'http://localhost:5000/llm/generate'  # URL of the Flask app
+    url = 'http://127.0.0.1:5000/llm/generate'  # URL of the Flask app
     data = {'query': query}
     response = requests.post(url, json=data)
     if response.status_code == 200:
@@ -35,9 +35,6 @@ def fetch_item_from_userquery(query):
     else:
         st.error('Failed to retrieve data from the API')
         return None
-def clear_form():
-    st.session_state["product_name"] = ""
-    st.session_state.pop('results', None) 
 def ShopTalk():
     st.title("Product Search Engine")
     query = st.text_input("Product Name:", key="product_name")
