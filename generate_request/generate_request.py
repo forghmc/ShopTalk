@@ -6,20 +6,43 @@ from pinecone import Pinecone
 import os
 from flask import abort
 import pandas as pd 
+import logging
+import sys
+
+# Configuration for logging format
+logging_str = "[%(asctime)s: %(levelname)s: %(module)s: %(message)s]"
+
+# Directory and file paths for log storage
+log_dir = "logs"
+log_filepath = os.path.join(log_dir,"running_logs.log")
+os.makedirs(log_dir, exist_ok=True)
+
+# Basic logging configuration with a file handler and a stream handler
+logging.basicConfig(
+    level= logging.INFO,
+    format= logging_str,
+
+    handlers=[
+        logging.FileHandler(log_filepath), # Log to a file
+        logging.StreamHandler(sys.stdout) # Log to the console
+    ]
+)
+
+# Logger instance with a specific name for the project
+logger = logging.getLogger("ShopTalkProjectLogger")
+
 app = Flask(__name__)
 
-#openai.api_key= os.environ.get("OPENAI_API_KEY")
-openai.api_key = "sk-proj-Q7C8IAr1oFunmXV1ARbkT3BlbkFJs9g1qzbXgQX19uzWSt27"
+openai.api_key= os.environ.get("OPENAI_API_KEY")
+#openai.api_key = ""
 # Set your Cohere API key
-cohere_api_key = 'Ca9SoTSV33ndqRYwas1Ymc8hL0ViK1QsquamXIQ3'
+cohere_api_key = ''
 df = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
 documents = df.to_dict(orient='records')
 
 # Create a key-value dictionary where key is document['item_id']
 document_dict = {doc['item_id']: doc for doc in documents}
 
-#print(open.api_key)
-print("Program started")
 # Define the system prompt
 system_message = """
 You have been assigned the task of processing user requests presented in natural language and converting them into structured data for further analysis.
@@ -32,14 +55,12 @@ Instructions:
 """
 def generate_image_url(path):
     filename = f"resize/{path}"
-    print(filename)
     return filename
 '''
 def generate_summary(obj):
     return "hello this is the product summary"
 '''
 def generate_summary(obj):
-    print(f'Genrating Summary: {obj}')
     # Define the system prompt and user query
     system_message = """
     You are a expert at generating a concise summary given a $Object json:
@@ -51,9 +72,9 @@ def generate_summary(obj):
     3. Summarise the bullet_point in less than or equal to 3 sentences
     4. The output should string containing the concise summary. You can also add a stylish statement for marketing the product. Keep the statement apt to the product.
     """
-    print("insummary")
+    logger.info("Generating summary from the engine")
     user_query = f"the $Object is {json.dumps(obj.to_json())}"
-    print(user_query)
+    
     # Send the chat completion request
     response = openai.chat.completions.create(
         model="gpt-4",
@@ -64,13 +85,11 @@ def generate_summary(obj):
         temperature=0.0
     )
     response_text = response.choices[0].message.content
-    # Print the response
-    print(response_text)
+    logger.info("Print response from openAI %s", response_text)
     return response_text
 
 @app.route('/llm/generate', methods=['POST'])
 def generate_response():
-    #print("generating response from backend")
     try: 
         user_query = request.get_json().get('query')
 
@@ -86,28 +105,21 @@ def generate_response():
         )
         response_text = response.choices[0].message.content
         response_data = json.loads(response_text)
-        #print("generating response from response_text of openai", response_text)
         embedding_model = openai.embeddings.create(input=[response_text], model="text-embedding-ada-002")
         embeddings = embedding_model.data[0].embedding
-        #print("generating embeddings from openai")
         pc = Pinecone(api_key=os.environ.get("PINE_CONE_API_KEY"))
         index = pc.Index("shopping-index")
      
         # Query Pinecone with the generated embedding
         results = index.query(vector=embeddings, top_k=3, include_metadata=True, namespace="shopping", include_values=True)
-        #print("generating matching query embeddings with the backend embeddings from pinecone")
         matches = results['matches']
         [json.dumps(document_dict[match['id']]) for match in matches]
         match_docs = [json.dumps(document_dict[match['id']]) for match in matches]
-        #print(match_docs)
         query_doc = response_text
         # Use Cohere reranking model
         co = cohere.Client(cohere_api_key)
 
         texts = [query_doc] + match_docs
-        #print("***************************************")
-        #print(texts)
-        #print("***************************************")
         reranked_matches = co.rerank(
             query=query_doc,
             documents=texts,
@@ -118,16 +130,12 @@ def generate_response():
         images =[]
         captions = []
         summaries = []
-        #print("Pre-loading data.csv")
-        sampled_data = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
-        #print(sampled_data)
+
         for result in reranked_matches.results[1:4]:
-            #print (result)
             item_score = result.relevance_score
-            #print(item_score)
             item_text= json.loads(result.document.text)
             item_id = item_text['item_id']
-            item_details = sampled_data[sampled_data['item_id'] == item_id].iloc[0]
+            item_details = df[df['item_id'] == item_id].iloc[0]
             item_name = item_details['item_name_in_en']
             brand_name = item_details['brand']
             product_type = item_details['product_type']
