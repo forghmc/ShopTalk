@@ -4,8 +4,8 @@ from mlProject import logger
 from sklearn.linear_model import ElasticNet
 import joblib
 from mlProject.entity.config_entity import ModelTrainerConfig
-from llama_index.llms import OpenAI
-from llama_index.embeddings import OpenAIEmbedding
+#from llama_index.llms import OpenAI
+#from llama_index.embeddings import OpenAIEmbedding
 import json
 from pinecone import Pinecone
 
@@ -13,13 +13,13 @@ from pinecone import Pinecone
 class ModelTrainer:
     def __init__(self, config):
         self.config = config
-        self.openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])  # Initialize OpenAI client
-        self.pinecone_client = Pinecone(api_key=os.environ["PINECONE_API_KEY"])  # Initialize Pinecone client
+        #self.openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])  # Initialize OpenAI client
+        #self.pinecone_client = Pinecone(api_key=os.environ["PINECONE_API_KEY"])  # Initialize Pinecone client
         
     def get_embedding(self, text):
         try:
-            embeddings = OpenAIEmbedding(model='text-embedding-ada-002', embed_batch_size=100)
-            response = embeddings.get_text_embedding(text)
+            #embeddings = OpenAIEmbedding(model='text-embedding-ada-002', embed_batch_size=100)
+            #response = embeddings.get_text_embedding(text)
             return response  # Extracting the embedding from the response
         except Exception as e:
             print(f"An error occurred: {str(e)}")  # Printing out the error if something goes wrong

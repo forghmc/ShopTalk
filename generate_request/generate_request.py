@@ -33,10 +33,12 @@ logger = logging.getLogger("ShopTalkProjectLogger")
 
 app = Flask(__name__)
 
-openai.api_key= os.environ.get("OPENAI_API_KEY")
-#openai.api_key = ""
+#openai.api_key= os.environ.get("OPENAI_API_KEY")
+openai.api_key = ''
 # Set your Cohere API key
 cohere_api_key = ''
+pinecone_api_key = ''
+
 df = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
 documents = df.to_dict(orient='records')
 
@@ -92,6 +94,7 @@ def generate_summary(obj):
 
 @app.route('/llm/generate', methods=['POST'])
 def generate_response():
+    print("generatimg 1")
     try: 
         user_query = request.get_json().get('query')
 
@@ -105,13 +108,14 @@ def generate_response():
             ],
             temperature=0.0
         )
+        print("generatimg 2")
         response_text = response.choices[0].message.content
         response_data = json.loads(response_text)
         embedding_model = openai.embeddings.create(input=[response_text], model="text-embedding-ada-002")
         embeddings = embedding_model.data[0].embedding
-        pc = Pinecone(api_key=os.environ.get("PINE_CONE_API_KEY"))
+        pc = Pinecone(api_key=pinecone_api_key)
         index = pc.Index("shopping-index")
-     
+        print("generatimg 3")
         # Query Pinecone with the generated embedding
         results = index.query(vector=embeddings, top_k=3, include_metadata=True, namespace="shopping", include_values=True)
         matches = results['matches']
@@ -120,7 +124,7 @@ def generate_response():
         query_doc = response_text
         # Use Cohere reranking model
         co = cohere.Client(cohere_api_key)
-
+        print("generatimg 4")
         texts = [query_doc] + match_docs
         reranked_matches = co.rerank(
             query=query_doc,
@@ -132,8 +136,9 @@ def generate_response():
         images =[]
         captions = []
         summaries = []
-
+        print("generatimg 5")
         for result in reranked_matches.results[1:4]:
+            print("generatimg 6")
             item_score = result.relevance_score
             item_text= json.loads(result.document.text)
             item_id = item_text['item_id']
