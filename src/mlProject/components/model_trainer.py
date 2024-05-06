@@ -6,8 +6,8 @@ import joblib
 from mlProject.utils.common import generate_image_caption
 from mlProject.utils.common import filter_caption_generate_combined_column
 from mlProject.entity.config_entity import ModelTrainerConfig
-from llama_index.llms import OpenAI
-from llama_index.embeddings import OpenAIEmbedding
+#from llama_index.llms import OpenAI
+#from llama_index.embeddings import OpenAIEmbedding
 import json
 from pinecone import Pinecone
 
@@ -15,8 +15,8 @@ from pinecone import Pinecone
 class ModelTrainer:
     def __init__(self, config):
         self.config = config
-        self.openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])  # Initialize OpenAI client
-        self.pinecone_client = Pinecone(api_key=os.environ["PINECONE_API_KEY"])  # Initialize Pinecone client
+        #self.openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])  # Initialize OpenAI client
+        #self.pinecone_client = Pinecone(api_key=os.environ["PINECONE_API_KEY"])  # Initialize Pinecone client
         
     def get_embedding(self,text,embeddings):
         try:
