@@ -16,33 +16,50 @@
 
 
 # How to run?
-### STEPS:
+##STEPS:
 
-Clone the repository
-
-```bash
-https://github.com/someshnaman/End_to_end_MLOPS_project
-```
-### STEP 01- Create a conda environment after opening the repository
+### Clone the repository
 
 ```bash
-#conda create -p ./env python=3.10 -y
-```
+https://github.com/forghmc/ShopTalk.git
 
+```
+Download following files from gdrive - https://drive.google.com/drive/folders/14BcyjB7wbvvgy9g3_suVVey4yufOfz24
+
+1. processed_dataset_target_data_with_captions_only.csv
+2. resize.zip -keep resize folder in parent directory and unzip it.
+
+### Update Env Variables
+
+Goto  setenv.sh  in parent folder edit the paths and keys make sure the secret keys are set and csv path should be same as the downloaded file is kept.
+
+After setting variables Run setenv.sh if needed gives executable permission 
+```bash
+chmod +x setenv.sh
+```
+```bash
+sh setenv.sh
+```
+### Create conda env
+```bash
+conda create -p ./env python=3.10 -y
+```
+### Activate env 
 ```bash
 conda activate ./env
 ```
 
 
-### STEP 02- install the requirements
+### install the requirements for backend
 
 ```bash
-chmod +x setup.sh
-```
-```bash
-./setup.sh
+pip install -r generate_request/requirements.txt' 
 
 ```
+
+
+## Running Build
+
 # Resize Image - this is neeeded once
 1. Provide the value for extracted image folder with in file 
 2. run utils/image_exctract.py
