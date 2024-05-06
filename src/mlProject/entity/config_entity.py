@@ -27,26 +27,22 @@ class DataValidationConfig:
 
 @dataclass(frozen=True)
 class DataTransformationConfig:
-    base_dir: Path
-    root_dir: Path
-    input_file:str
-    output_file:str
     data_dir: Path
-    metadata_dir: Path
+    base_dir: Path
+    input_file: Path
+    output_file: Path
     ingest_dir: Path
-
-
+    root_dir: Path
+    metadata_dir : Path
 
 @dataclass(frozen=True)
 class ModelTrainerConfig:
     root_dir: Path
-    train_data_path: Path
-    test_data_path: Path
-    model_name: str
-    alpha: float
-    l1_ratio: float
-    target_column: str
-
+    input_file: Path
+    output_file_captions: Path
+    final_output_file: str
+    ingest_dir: float
+    
 @dataclass(frozen=True)
 class ModelEvaluationConfig:
     root_dir: Path

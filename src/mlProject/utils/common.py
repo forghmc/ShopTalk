@@ -15,11 +15,12 @@ from PIL import Image
 import requests
 import torch
 import io
-from transformers import BlipProcessor, BlipForConditionalGeneration
+#Enable it for runninge the models
+#from transformers import BlipProcessor, BlipForConditionalGeneration
 from io import BytesIO
 from torchvision import transforms
 from torchvision.transforms.functional import InterpolationMode
-import openai
+#import openai
 from pinecone import Pinecone
 
 @ensure_annotations
@@ -61,6 +62,26 @@ def create_directories(path_to_directories: list, verbose=True):
         if verbose:
             logger.info(f"created directory at: {path}")
 
+'''
+    Note this code needs first to generate image caption(Using blip) and
+    that are generated during model training and it is compute intesnsive.
+    So filtering the dataset based on the dataset that will have caption generated.
+    This function will be called from model trainer.
+    It also generate the combined column which has text joined from one column as
+    seprated by space. 
+    '''
+def filter_caption_generate_combined_column(dataset):
+    '''
+    Filters rows in a DataFrame based on the 'caption' column to exclude any rows where
+    the caption is missing or empty.
+    '''
+    filtered_df = dataset[dataset['caption'].notna() & dataset['caption'].astype(str).str.strip() != '']
+    columns_to_combine = filtered_df.columns.drop('path')
+
+    # Safely combine the data from the selected columns into a new column with space-separated values
+    filtered_df['combined'] = filtered_df[columns_to_combine].apply(lambda x: ' '.join(x.astype(str)), axis=1)
+    return filtered_df
+        
 
 @ensure_annotations
 def save_json(path: Path, data: dict):
@@ -160,21 +181,20 @@ def load_product_image(img_url):
     except Exception as e:
         print(f"Error processing image {img_url}: {e}")
         return None
-def generateImageCaption(dataset):
+def generate_image_caption(dataset):
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     for index, row in dataset.iterrows():
         processor = BlipProcessor.from_pretrained('Salesforce/blip-image-captioning-base')
         model = BlipForConditionalGeneration.from_pretrained('Salesforce/blip-image-captioning-base')
-        image = load_product_image('/Users/user/Documents/MLProjects/project6/artifacts/data_ingestion/abo-images-small/images/resize/' + row['path'], device)
+        image = load_product_image('artifacts/data_transformation/resize/' + row['path'], device)
         if image is None:
             continue
         caption =''
         with torch.no_grad():
             caption = model.generate(image, sample=False, num_beams=3, max_length=20, min_length=5)
             dataset.at[index, 'caption'] = caption 
-
-    print(dataset.head(10))
+    return dataset
     
 
 

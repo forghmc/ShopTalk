@@ -29,10 +29,11 @@ data_transformation:
   metadata_dir: artifacts/data_ingestion/abo-images-small/images/metadata
 
 model_trainer:
+  ingest_dir: artifacts/data_transformation
+  input_file: transformed_dataset.csv
   root_dir: artifacts/model_trainer
-  train_data_path: artifacts/data_ingestion/data_tar_extracted/listings/metadata/Train/listings_0_train.json
-  test_data_path: artifacts/data_ingestion/data_tar_extracted/listings/metadata/Test/listings_0_test.json
-  model_name: model.joblib
+  output_file_captions: dataset_with_captions.csv
+  final_output_file: final_dataset_with_captions.csv
 
 model_evaluation:
   root_dir: artifacts/model_evaluation
