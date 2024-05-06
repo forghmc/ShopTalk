@@ -34,12 +34,12 @@ logger = logging.getLogger("ShopTalkProjectLogger")
 app = Flask(__name__)
 
 #openai.api_key= os.environ.get("OPENAI_API_KEY")
-openai.api_key = ''
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 # Set your Cohere API key
-cohere_api_key = ''
-pinecone_api_key = ''
+cohere_api_key = os.environ.get('cohere_api_key')
+pinecone_api_key = os.environ.get('PINE_CONE_API_KEY')
 
-df = pd.read_csv('artifacts/data_ingestion/data_tar_extracted/processed_dataset_target_data_with_captions_only.csv')
+df = pd.read_csv(os.environ.get('Dataset'))
 documents = df.to_dict(orient='records')
 
 # Create a key-value dictionary where key is document['item_id']
@@ -56,7 +56,7 @@ Instructions:
 5. Ensure the result is formatted as a JSON string only, containing no extra text or formatting.
 """
 def generate_image_url(path):
-    filename = f"resize/{path}"
+    filename = f"{os.environ.get('image_path')}/{path}"
     return filename
 '''
 def generate_summary(obj):

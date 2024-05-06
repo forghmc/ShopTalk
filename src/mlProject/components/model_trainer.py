@@ -6,8 +6,8 @@ import joblib
 from mlProject.utils.common import generate_image_caption
 from mlProject.utils.common import filter_caption_generate_combined_column
 from mlProject.entity.config_entity import ModelTrainerConfig
-#from llama_index.llms import OpenAI
-#from llama_index.embeddings import OpenAIEmbedding
+from llama_index.llms import OpenAI
+from llama_index.embeddings import OpenAIEmbedding
 import json
 from pinecone import Pinecone
 

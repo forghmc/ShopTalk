@@ -15,7 +15,7 @@ from PIL import Image
 import requests
 import torch
 import io
-#Enable it for runninge the models
+# Uncomment this  for training the data with the models
 #from transformers import BlipProcessor, BlipForConditionalGeneration
 from io import BytesIO
 from torchvision import transforms
